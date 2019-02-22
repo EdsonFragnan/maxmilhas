@@ -23,7 +23,7 @@ http://localhost:3000/status
 
 - POST - Cadastrar CPF e status
 http://localhost:3000/register
-- body:
+* body:
 {
     "cpf": 14310205235,
     "blacklist": true
@@ -31,7 +31,7 @@ http://localhost:3000/register
 
 - PATCH - Alterar o status do CPF
 http://localhost:3000/update/14310205235
-- body:
+* body:
 {
 	"blacklist": true
 }
@@ -41,7 +41,7 @@ http://localhost:3000/delete/79267161890
 
 - POST - Cadastrar muitos CPF's (Criação de Massa) 
 http://localhost:3000/createMass
-- body:
+* body:
 {
 	"cpfs": [
 	    { "cpf": 82192230818, "blacklist": false},
