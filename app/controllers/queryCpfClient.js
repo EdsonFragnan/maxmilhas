@@ -27,7 +27,6 @@ module.exports.consulta = (req, res) => {
             });
         });
     };
-
     main()
     async function main() {
         try {   
