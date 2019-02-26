@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = app => {
   const { buildCheckFunction, validationResult } = require('express-validator/check');
   const checkBodyQueryParam = buildCheckFunction(['param', 'body', 'query']);
@@ -40,88 +42,76 @@ module.exports = app => {
   };
   
   app.post('/createMass', (req, res) => {
-    registerRequisition.requisition();
-    controller.createClients.createClients(req, res);
+    registerRequisition.requisition(app);
+    controller.createClients.createClients(app, req, res);
   });
 
-  app.get('/consult', [
-    checkBodyQueryParam('cpf').isLength({min: 11, max: 11})
-  ], (req, res) => {
-    errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(422).json({ message: errors.array() });
+  app.get('/consult', (req, res) => {
+    let valCPF = validateCPF(req.query.cpf);
+    if (!valCPF) {
+      res.status(422).json({ message: 'Invalid CPF'});
     } else {
-      let valCPF = validateCPF(req.query.cpf);
-      if (!valCPF) {
-        res.status(422).json({ message: 'Invalid CPF'});
-      }
-      registerRequisition.requisition();
-      controller.queryCpfClient.consulta(req, res);
+      registerRequisition.requisition(app);
+      controller.queryCpfClient.consult(app, req, res);
     }
   });
   
   app.get('/blacklist', (req, res) => {
-    registerRequisition.requisition();
-    controller.blacklistClients.blacklist(req, res);
+    registerRequisition.requisition(app);
+    controller.blacklistClients.blacklist(app, req, res);
   });
 
   app.get('/clients', (req, res) => {
-    registerRequisition.requisition();
-    controller.queryAllClients.allClients(req, res);
+    registerRequisition.requisition(app);
+    controller.queryAllClients.allClients(app, req, res);
   });
 
   app.get('/status', (req, res) => {
-    registerRequisition.requisition();
-    controller.statusAccess.status(req, res);
+    registerRequisition.requisition(app);
+    controller.statusAccess.status(app, req, res);
   });
 
   app.post('/register', [
-    checkBodyQueryParam('cpf').isLength({min: 11, max: 11}),
     checkBodyQueryParam('blacklist').isBoolean()
   ], (req, res) => {
     errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(422).json({ message: errors.array() });
     } else {
-      let valCPF = validateCPF(req.params.cpf);
+      let valCPF = validateCPF(req.body.cpf);
       if (!valCPF) {
         res.status(422).json({ message: 'Invalid CPF'});
+      } else {
+        registerRequisition.requisition(app);
+        controller.registerClient.register(app, req, res);
       }
-      registerRequisition.requisition();
-      controller.registerClient.register(req, res);
     }
   });
 
   app.patch('/update/:cpf', [
-    checkBodyQueryParam('cpf').isLength({min: 11, max: 11}),
     checkBodyQueryParam('blacklist').isBoolean()
   ], (req, res) => {
     errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(422).json({ message: errors.array() });
     } else {
-      let valCPF = validateCPF(req.params.cpf);
+      let valCPF = validateCPF(req.params.cpf.toString());
       if (!valCPF) {
         res.status(422).json({ message: 'Invalid CPF'});
+      } else {
+        registerRequisition.requisition(app);
+        controller.updateClient.update(app, req, res);
       }
-      registerRequisition.requisition();
-      controller.updateClient.update(req, res);
     }
   });
 
-  app.delete('/delete/:cpf', [
-    checkBodyQueryParam('cpf').isLength({min: 11, max: 11}),
-  ],(req, res) => {
-    errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(422).json({ message: errors.array() });
+  app.delete('/delete/:cpf', (req, res) => {
+    let valCPF = validateCPF(req.params.cpf);
+    if (!valCPF) {
+      res.status(422).json({ message: 'Invalid CPF'});
     } else {
-      let valCPF = validateCPF(req.params.cpf);
-      if (!valCPF) {
-        res.status(422).json({ message: 'Invalid CPF'});
-      }
-      registerRequisition.requisition();
-      controller.deleteClient.delete(req, res);
+      registerRequisition.requisition(app);
+      controller.deleteClient.delete(app, req, res);
     }
   });
 

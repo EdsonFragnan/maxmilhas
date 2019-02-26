@@ -6,6 +6,6 @@ module.exports = app => {
 
     app.use(body_parser.json());
     app.listen(run_port, (port) => {
-        console.log(`MaxMilhas working on port ${run_port}`)
+        console.log(`MaxMilhas working on port ${run_port}`);
     });
 }

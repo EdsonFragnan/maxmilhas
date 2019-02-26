@@ -1,18 +1,24 @@
 'use strict';
 
-module.exports.delete = (req, res) => {
+module.exports.delete = (app, req, res) => {
    
-    const clients = require('../models/model.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
     const logger = require('../log/logger.js');
 
     const callModel = (cpf) => {
         return new Promise((resolve, reject) => {
-            clients.deleteClient(cpf, (err, data) => {
+            cpfDao.deleteClient(cpf, (err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error deleting'
+                    };
+                    reject(message);
                 }
                 resolve({
-                    message: `Deleted client ${cpf}`
+                    message: `Deleted CPF ${cpf}`
                 });
             });
         });
@@ -22,7 +28,8 @@ module.exports.delete = (req, res) => {
     async function main() {
         try {
             const callMod = await callModel(req.params.cpf);
-            res.json(callMod);
+            logger.info('CPF deleted');
+            res.status(204).json();
         } catch (e) {
             logger.error(e);
             res.status(e.statusCode).json({message: e.message});

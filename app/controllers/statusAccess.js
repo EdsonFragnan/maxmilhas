@@ -1,8 +1,11 @@
 'use strict';
 
-module.exports.status = (req, res) => {
+module.exports.status = (app, req, res) => {
 
-    const clients = require('../models/model.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
+
     const logger = require('../log/logger.js');
 
     const formatUptime = (value) => {
@@ -30,27 +33,35 @@ module.exports.status = (req, res) => {
 
     const allRequisition = () => {
         return new Promise((resolve, reject) => {
-            clients.allRequisitions((err, data) => {
+            cpfDao.allRequisitions((err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error'
+                    };
+                    reject(message);
                 }
-                resolve(data)
+                resolve(data);
             });
         });
     };
 
     const callModel = () => {
         return new Promise((resolve, reject) => {
-            clients.allBlacklist((err, data) => {
+            cpfDao.allBlacklist((err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Status Error'
+                    };
+                    reject(message);
                 }
-                resolve(data)
+                resolve(data);
             });
         });
     };
 
-    main()
+    main();
     async function main() {
         try {
             const total =  await allRequisition();

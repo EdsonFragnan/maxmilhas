@@ -1,13 +1,15 @@
 'use strict';
 
-module.exports.requisition = () => {
+module.exports.requisition = (app) => {
 
-    const clients = require('../models/model.js');
     const logger = require('../log/logger.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
 
     const callModelRequisition = () => {
         return new Promise((resolve, reject) => {
-            clients.insertRequisition(true, (err, data) => {
+            cpfDao.insertRequisition(true, (err, data) => {
                 if (err) {
                     reject(err);
                 }

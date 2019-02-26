@@ -1,8 +1,11 @@
 'use strict';
 
-module.exports.consulta = (req, res) => {
+module.exports.consult = (app, req, res) => {
    
-    const clients = require('../models/model.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
+
     const logger = require('../log/logger.js');
 
     const mountResponse = (clients) => {
@@ -19,15 +22,20 @@ module.exports.consulta = (req, res) => {
 
     const callModel = (cpf) => {
         return new Promise((resolve, reject) => {
-            clients.cpfSearch(cpf, (err, data) => {
+            cpfDao.cpfSearch(cpf, (err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error to find the CPF'
+                    };
+                    reject(message);
                 }
                 resolve(data);
             });
         });
     };
-    main()
+
+    main();
     async function main() {
         try {   
             const callMod = await callModel(req.query.cpf);

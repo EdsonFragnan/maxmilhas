@@ -1,8 +1,10 @@
 'use strict';
 
-module.exports.register = (req, res) => {
+module.exports.register = (app, req, res) => {
    
-    const clients = require('../models/model.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
     const logger = require('../log/logger.js');
 
     const maskCPF = (value_cpf) => {
@@ -20,15 +22,19 @@ module.exports.register = (req, res) => {
 
     const callModel = (client) => {
         return new Promise((resolve, reject) => {
-            clients.insertClient(client, (err, data) => {
+            cpfDao.insertClient(client, (err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error registering'
+                    };
+                    reject(message);
                 }
                 resolve(data);
             });
         });
     };
-    main()
+    main();
     async function main() {
         try {
             const response = await mountResponse(req.body);

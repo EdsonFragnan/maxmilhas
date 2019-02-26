@@ -1,9 +1,10 @@
 'use strict';
 
-module.exports.blacklist = (req, res) => {
-
-    const clients = require('../models/model.js');
+module.exports.blacklist = (app, req, res) => {
     const logger = require('../log/logger.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
 
     const maskCPF = (value_cpf) => {
         value_cpf = value_cpf.toString();
@@ -25,11 +26,15 @@ module.exports.blacklist = (req, res) => {
 
     const callModel = () => {
         return new Promise((resolve, reject) => {
-            clients.allBlacklist((err, data) => {
+            cpfDao.allBlacklist((err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Blacklist Error'
+                    };
+                    reject(message);
                 }
-                resolve(data)
+                resolve(data);
             });
         });
     };

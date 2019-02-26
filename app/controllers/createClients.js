@@ -1,20 +1,27 @@
 'use strict';
 
-module.exports.createClients = (req, res) => {
+module.exports.createClients = (app, req, res) => {
    
-    const clients = require('../models/model.js');
     const logger = require('../log/logger.js');
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
 
     const callModel = (item) => {
         return new Promise((resolve, reject) => {
-            clients.insertClient(item, (err, data) => {
+            cpfDao.insertClient(item, (err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error creating.'
+                    };
+                    reject(message);
                 }
                 resolve(data);
             });
         });
     };
+
     main();
     async function main() {
         try {

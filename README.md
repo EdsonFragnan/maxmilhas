@@ -25,7 +25,7 @@ http://localhost:3000/status
 http://localhost:3000/register
 ```
 {
-    "cpf": 14310205235,
+    "cpf": "14310205235",
     "blacklist": true
 }
 ```
@@ -46,16 +46,16 @@ http://localhost:3000/createMass
 ```
 {
 	"cpfs": [
-	    { "cpf": 82192230818, "blacklist": false},
-	    { "cpf": 41321794860, "blacklist": true},
-	    { "cpf": 40164820892, "blacklist": true},
-	    { "cpf": 58463054820, "blacklist": false},
-	    { "cpf": 79267161890, "blacklist": true},
-	    { "cpf": 77593454886, "blacklist": false},
-	    { "cpf": 38221510840, "blacklist": true},
-	    { "cpf": 95210334872, "blacklist": false},
-	    { "cpf": 98379555899, "blacklist": false},
-	    { "cpf": 19818927885, "blacklist": true}
+	    { "cpf": "82192230818", "blacklist": false},
+	    { "cpf": "41321794860", "blacklist": true},
+	    { "cpf": "40164820892", "blacklist": true},
+	    { "cpf": "58463054820", "blacklist": false},
+	    { "cpf": "79267161890", "blacklist": true},
+	    { "cpf": "77593454886", "blacklist": false},
+	    { "cpf": "38221510840", "blacklist": true},
+	    { "cpf": "95210334872", "blacklist": false},
+	    { "cpf": "98379555899", "blacklist": false},
+	    { "cpf": "19818927885", "blacklist": true}
 	]
 }
 ```

@@ -1,9 +1,12 @@
 'use strict';
 
-module.exports.allClients = (req, res) => {
+module.exports.allClients = (app, req, res) => {
 
     const logger = require('../log/logger.js');
-    const clients = require('../models/model.js');
+
+    const sqlite3 = require('sqlite3').verbose();
+    const db = new sqlite3.Database('./maxmilhas'); 
+    const cpfDao = new app.models.CpfDao(db);
 
     const maskCPF = (value_cpf) => {
         value_cpf = value_cpf.toString();
@@ -33,11 +36,15 @@ module.exports.allClients = (req, res) => {
 
     const callModel = () => {
         return new Promise((resolve, reject) => {
-            clients.allClients((err, data) => {
+            cpfDao.allClients((err, data) => {
                 if (err) {
-                    reject(err);
+                    let message = {
+                        statusCode: 422,
+                        message: 'Error to find the CPFs'
+                    };
+                    reject(message);
                 }
-                resolve(data)
+                resolve(data);
             });
         });
     };
